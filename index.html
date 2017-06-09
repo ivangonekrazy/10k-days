@@ -1,0 +1,164 @@
+<html>
+  <head>
+    <title>10.000 days</title>
+    <script src="https://cdn.jsdelivr.net/g/zepto@1.2.0,underscorejs@1.8.3"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/normalize/7.0.0/normalize.css">
+    <style>
+      body {
+        font-family: Helvetica, sans-serif;
+        font-weight: bold;
+        color: #484848;
+      }
+
+      div#main {
+        height: 500px;
+        width: 600px;
+
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+
+        margin: auto;
+      }
+
+      select {
+        font-size: 32pt;
+        color: #484848;
+      }
+
+      div#masthead {
+        font-size: 18pt;
+        margin-bottom: 22px;
+      }
+
+      div#form-div {
+        align: center;
+        margin-bottom: 35px;
+      }
+
+      div#future-date {
+        font-size: 72pt;
+        color: #2b2b2b;
+        margin-bottom: 72px;
+      }
+
+      div#suggestions {
+        color: #AAAAAA;
+      }
+    </style>
+  </head>
+  <body>
+    <div id=main>
+      <div id=form-div>
+      <div id=masthead>
+        10.000 days
+      </div>
+        <form id=date-form>
+          <select id=day-dropdown name=day></select>
+          <select id=month-dropdown name=month></select>
+          <select id=year-dropdown name=year></select>
+        <form>
+      </div>
+      <div id=future-date>
+        <div id=date> </div>
+        <div id=month> </div>
+        <div id=year> </div>
+      </div>
+    <div>
+    <div id=suggestions>
+      <span data-date='11.8.2001'>9/11.</span>
+      <span data-date='27.1.1967'>Curt Cobain's birthday.</span>
+      <span data-date='29.6.1969'>Apollo 11 landing.</span>
+    </div>
+    <script type=text/javascript>
+
+      (function(window, document) {
+        var monthArray = [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December'
+        ];
+
+        var populateNumericOptions = function(selectElem, start, end) {
+          for (var i=start; i <= end; i++) {
+            selectElem.append(
+              $('<option>').attr('value', i).text(i)
+            );
+          }
+        }
+
+        var populateMonthOptions = function(selectElem) {
+          for (var i=0; i < 11; i++) {
+            selectElem.append(
+              $('<option>').attr('value', i).text( monthArray[i] )
+            );
+          }
+        }
+
+        var tenkDaysFrom = function(startDate) {
+          tenk_days_seconds = 10000 * 1000 * 60 * 60 * 24;
+          return new Date(startDate.getTime() + tenk_days_seconds);
+        }
+
+        var dateFromForm = function() {
+          var year = $('#year-dropdown').val();
+          var month = $('#month-dropdown').val();
+          var date = $('#day-dropdown').val();
+
+          return new Date(year, month, date);
+        }
+
+        var setFormToDate = function(d) {
+          var year = $('#year-dropdown').val(d.getFullYear());
+          var month = $('#month-dropdown').val(d.getMonth());
+          var date = $('#day-dropdown').val(d.getDate());
+        }
+
+        var setFutureDate = function(d) {
+            var d = tenkDaysFrom(d);
+            $('#future-date #date').text(d.getDate());
+            $('#future-date #month').text(monthArray[d.getMonth()]);
+            $('#future-date #year').text(d.getFullYear());
+        }
+
+        var dateFromSuggestion = function(dataStr) {
+          p = dataStr.split('.');
+          return new Date(p[2], p[1], p[0]);
+        }
+
+        populateNumericOptions($('#day-dropdown'), 1, 31);
+        populateMonthOptions($('#month-dropdown'));
+        populateNumericOptions($('#year-dropdown'), 1950, (new Date()).getFullYear());
+
+        $('#date-form select').on('change', function(e) {
+            setFutureDate( dateFromForm() );
+        });
+
+        $(document).on('ready', function(e) {
+            var today = new Date();
+            setFormToDate(today);
+            setFutureDate(today);
+        });
+
+        $('#suggestions span').on('click', function(e) {
+            var c = dateFromSuggestion($(e.target).data('date'));
+            setFormToDate(c);
+            setFutureDate(c);
+        });
+
+      })(window, document);
+    </script>
+  </body>
+</html>
+
